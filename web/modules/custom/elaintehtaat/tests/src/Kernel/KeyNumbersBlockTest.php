@@ -51,7 +51,7 @@ class KeyNumbersBlockTest extends KernelTestBase {
     $this->assertSame('elaintehtaat:key-numbers', $build['#component']);
     $this->assertSame([
       ['value' => 2, 'label' => 'albums'],
-      ['value' => 2, 'label' => 'media'],
+      ['value' => 2, 'label' => 'files'],
       ['value' => 1, 'label' => 'project'],
     ], $build['#props']['items']);
   }

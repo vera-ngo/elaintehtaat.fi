@@ -64,7 +64,7 @@ final class KeyNumbersBlock extends BlockBase implements ContainerFactoryPluginI
           ],
           [
             'value' => $media,
-            'label' => (string) $this->formatPlural($media, 'media item', 'media'),
+            'label' => (string) $this->formatPlural($media, 'file', 'files'),
           ],
           [
             'value' => $projects,

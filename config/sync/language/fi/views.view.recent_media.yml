@@ -3,4 +3,4 @@ display:
     display_options:
       empty:
         area_text_custom:
-          content: 'Mediaa ei ole vielä julkaistu.'
+          content: 'Tiedostoja ei ole vielä julkaistu.'

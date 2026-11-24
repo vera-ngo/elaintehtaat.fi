@@ -57,7 +57,7 @@ display:
           plugin_id: text_custom
           label: ''
           empty: true
-          content: 'No media has been published yet.'
+          content: 'No files have been published yet.'
           tokenize: false
       sorts:
         field_date_value:
