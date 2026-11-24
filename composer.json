@@ -15,6 +15,27 @@
             "url": "https://github.com/Punakettu/bunny_stream"
         },
         {
+            "type": "package",
+            "package": {
+                "name": "exiftool/exiftool",
+                "version": "13.64",
+                "type": "library",
+                "description": "ExifTool, run with the host's Perl. Not on Packagist, so the official GitHub repository is pinned by tag and commit.",
+                "homepage": "https://exiftool.org/",
+                "license": "Artistic-1.0-Perl OR GPL-1.0-or-later",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/exiftool/exiftool.git",
+                    "reference": "3d7a0538324e9b04aa8930201b007009491321d2"
+                },
+                "dist": {
+                    "type": "zip",
+                    "url": "https://github.com/exiftool/exiftool/archive/3d7a0538324e9b04aa8930201b007009491321d2.zip",
+                    "reference": "3d7a0538324e9b04aa8930201b007009491321d2"
+                }
+            }
+        },
+        {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
         },
@@ -44,6 +65,7 @@
         "drupal/search_api": "^1.41",
         "drupal/simple_sitemap": "^4.2",
         "drush/drush": "^13.8",
+        "exiftool/exiftool": "13.64",
         "npm-asset/tus-js-client": "^4.3",
         "oomphinc/composer-installers-extender": "^2.0"
     },
