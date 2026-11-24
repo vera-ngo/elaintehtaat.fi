@@ -1,0 +1,17 @@
+# Swedish translation of the Eläintehtaat module.
+msgid ""
+msgstr ""
+"Project-Id-Version: elaintehtaat\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sv\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "file"
+msgid_plural "files"
+msgstr[0] "fil"
+msgstr[1] "filer"
+
+msgid "Download file"
+msgstr "Ladda ner fil"

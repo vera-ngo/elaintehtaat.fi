@@ -41,7 +41,7 @@
         {# The plural variable has to be called "count": the .po entry keys on @count. #}
         {% set count = view.total_rows %}
         <p class="browse__count muted">
-          {% trans %}{{ count }} media item{% plural count %}{{ count }} media{% endtrans %}
+          {% trans %}{{ count }} file{% plural count %}{{ count }} files{% endtrans %}
         </p>
       {% endif %}
     </div>
