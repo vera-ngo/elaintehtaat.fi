@@ -75,25 +75,6 @@ and then redirected to the bucket.
 - To point at real S3 or another provider, change the `S3_*` variables and the
   `use_customhost` / `hostname` / `domain` lines in `settings.php`.
 
-## ExifTool
-
-[ExifTool](https://exiftool.org/) reads and writes the metadata inside image
-files. It is plain Perl, so it needs no installation: Composer puts it in
-`vendor/exiftool/exiftool` and the host's Perl runs it.
-
-```sh
-docker compose exec app perl vendor/exiftool/exiftool/exiftool -ver
-```
-
-It is not on Packagist. `composer.json` defines the package itself and pins a
-tag of the official GitHub repository by commit, so Dependabot does not see
-it. To update, change the version and the commit in that definition (three
-places) and in `require`, then run `composer update exiftool/exiftool`.
-ExifTool parses untrusted files, so keep it current.
-
-Each deploy prints whether ExifTool runs on the production host. That check
-only covers the command line, not PHP serving web requests.
-
 ## Caching notes
 
 - Anonymous page responses carry `Cache-Control: max-age=3600, public`
