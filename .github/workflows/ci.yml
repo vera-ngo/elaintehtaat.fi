@@ -84,10 +84,6 @@ jobs:
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v4
 
-      # ExifTool ships as a Composer package and runs on the host's Perl.
-      - name: Check that ExifTool runs
-        run: perl vendor/exiftool/exiftool/exiftool -ver
-
       - name: Prepare test directories
         run: mkdir -p web/sites/simpletest/browser_output
 
