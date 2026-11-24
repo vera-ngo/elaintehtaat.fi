@@ -13,7 +13,8 @@ RUN install-php-extensions \
     xdebug \
     zip
 
-RUN apk add --no-cache git unzip mysql-client patch
+# Perl runs ExifTool, which Composer installs to vendor/exiftool/exiftool.
+RUN apk add --no-cache git unzip mysql-client patch perl
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 

@@ -255,6 +255,18 @@ function drupal_bootstraps(): bool {
   return trim(run('{{bin/drush}} status --field=bootstrap 2>/dev/null || true')) === 'Successful';
 }
 
+desc('Reports whether the shipped ExifTool runs on the host');
+task('exiftool:check', function () {
+  // Nothing uses ExifTool yet, so a host without a working Perl only gets a
+  // warning and the deploy carries on.
+  $command = 'perl {{release_path}}/vendor/exiftool/exiftool/exiftool -ver';
+  if (test($command . ' >/dev/null 2>&1')) {
+    info('ExifTool ' . trim(run($command)) . ' runs on this host.');
+    return;
+  }
+  warning('ExifTool does not run on this host: ' . trim(run($command . ' 2>&1 || true')));
+});
+
 desc('Dumps the database before running updates');
 task('drush:backup', function () {
   if (!drupal_bootstraps()) {
@@ -302,6 +314,7 @@ task('deploy', [
   'deploy:shared',
   'deploy:settings',
   'deploy:basic_auth',
+  'exiftool:check',
   'drush:backup',
   'drush:maint:on',
   'drush:deploy',

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "982ad1fcc466f22ae97fa6940fa6326d",
+    "content-hash": "d6eef1e8f57c5fa6f75da437a84f5b18",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3082,6 +3082,26 @@
                 }
             ],
             "time": "2026-11-22T16:52:20+00:00"
+        },
+        {
+            "name": "exiftool/exiftool",
+            "version": "13.64",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/exiftool/exiftool.git",
+                "reference": "3d7a0538324e9b04aa8930201b007009491321d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/exiftool/exiftool/archive/3d7a0538324e9b04aa8930201b007009491321d2.zip",
+                "reference": "3d7a0538324e9b04aa8930201b007009491321d2"
+            },
+            "type": "library",
+            "license": [
+                "Artistic-1.0-Perl OR GPL-1.0-or-later"
+            ],
+            "description": "ExifTool, run with the host's Perl. Not on Packagist, so the official GitHub repository is pinned by tag and commit.",
+            "homepage": "https://exiftool.org/"
         },
         {
             "name": "grasmash/expander",
