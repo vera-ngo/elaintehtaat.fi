@@ -257,8 +257,6 @@ function drupal_bootstraps(): bool {
 
 desc('Reports whether the shipped ExifTool runs on the host');
 task('exiftool:check', function () {
-  // Nothing uses ExifTool yet, so a host without a working Perl only gets a
-  // warning and the deploy carries on.
   $command = 'perl {{release_path}}/vendor/exiftool/exiftool/exiftool -ver';
   if (test($command . ' >/dev/null 2>&1')) {
     info('ExifTool ' . trim(run($command)) . ' runs on this host.');
