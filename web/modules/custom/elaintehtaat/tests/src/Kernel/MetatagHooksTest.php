@@ -84,8 +84,8 @@ class MetatagHooksTest extends KernelTestBase {
   public function testMediaPage(): void {
     $media = $this->createImageMedia('Frame');
     $album = $this->createAlbum(['title' => 'Fox farm', 'field_album_media' => [$media]]);
-    // A second album holding the same item must not be picked.
-    $this->createAlbum(['title' => 'Other farm', 'field_album_media' => [$media]]);
+    // An album that does not hold the item must not be picked.
+    $this->createAlbum(['title' => 'Other farm', 'field_album_media' => [$this->createImageMedia('Other')]]);
 
     $this->visit('/node/' . $album->id() . '/media/' . $media->id());
 

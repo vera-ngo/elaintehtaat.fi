@@ -54,9 +54,9 @@ class AlbumDataProcessorTest extends KernelTestBase {
   }
 
   /**
-   * An item is indexed with the species and use of every album holding it.
+   * An item is indexed with the values of the album holding it.
    */
-  public function testValuesOfEveryAlbumAreIndexed(): void {
+  public function testValuesOfTheAlbumAreIndexed(): void {
     $pig = $this->createTerm(self::SPECIES_VOCABULARY, 'Pig');
     $fox = $this->createTerm(self::SPECIES_VOCABULARY, 'Fox');
     $meat = $this->createTerm(self::USE_VOCABULARY, 'Meat');
@@ -65,15 +65,9 @@ class AlbumDataProcessorTest extends KernelTestBase {
     $this->createAlbum([
       'title' => 'Pig farm',
       'field_album_media' => [$media],
-      'field_species' => [$pig],
+      'field_species' => [$pig, $fox],
       'field_use' => [$meat],
       'field_date' => '2024-05-14',
-    ]);
-    $this->createAlbum([
-      'title' => 'Fox farm',
-      'field_album_media' => [$media],
-      'field_species' => [$fox],
-      'field_date' => '2023-09-02',
     ]);
 
     $item = $this->itemFor($media);
@@ -83,11 +77,8 @@ class AlbumDataProcessorTest extends KernelTestBase {
       $item->getField('album_species')->getValues(),
     );
     $this->assertSame([(int) $meat->id()], $item->getField('album_use')->getValues());
-    $this->assertEqualsCanonicalizing(
-      ['Pig farm', 'Fox farm'],
-      array_map('strval', $item->getField('album_title')->getValues()),
-    );
-    $this->assertCount(2, $item->getField('album_date')->getValues());
+    $this->assertSame(['Pig farm'], array_map('strval', $item->getField('album_title')->getValues()));
+    $this->assertCount(1, $item->getField('album_date')->getValues());
   }
 
   /**

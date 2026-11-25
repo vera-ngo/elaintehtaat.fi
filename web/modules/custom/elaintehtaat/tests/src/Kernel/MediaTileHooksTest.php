@@ -67,7 +67,7 @@ class MediaTileHooksTest extends KernelTestBase {
   }
 
   /**
-   * Inside an album the tile links to that album, not to the newest one.
+   * Inside an album the tile links to that album without looking it up.
    */
   public function testTileInsideAlbumLinksToTheAlbumShown(): void {
     // The reference formatter checks view access on each referenced item.
@@ -76,12 +76,6 @@ class MediaTileHooksTest extends KernelTestBase {
     $media = $this->createImageMedia();
     $shown = $this->createAlbum([
       'title' => 'First sighting',
-      'created' => 100,
-      'field_album_media' => [$media],
-    ]);
-    $this->createAlbum([
-      'title' => 'Later sighting',
-      'created' => 200,
       'field_album_media' => [$media],
     ]);
 

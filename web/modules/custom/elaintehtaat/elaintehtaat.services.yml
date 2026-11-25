@@ -4,6 +4,8 @@ services:
 
   Drupal\elaintehtaat\Album\AlbumLookup: ~
 
+  Drupal\elaintehtaat\Album\OneAlbumPerMedia: ~
+
   Drupal\elaintehtaat\Language\FallbackLanguage: ~
 
   Drupal\elaintehtaat\PathProcessor\MediaPagePathProcessor:
