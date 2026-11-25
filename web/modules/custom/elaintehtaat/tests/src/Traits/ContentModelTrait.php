@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\elaintehtaat\Traits;
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\elaintehtaat\Album\OneAlbumPerMedia;
 use Drupal\elaintehtaat\Entity\Album;
 use Drupal\elaintehtaat\Entity\Image;
 use Drupal\elaintehtaat\Entity\Licence;
@@ -14,6 +15,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Drupal\media\MediaInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
@@ -223,6 +225,29 @@ trait ContentModelTrait {
     $licence->save();
     $this->assertInstanceOf(Licence::class, $licence);
     return $licence;
+  }
+
+  /**
+   * Adds a media item to an album behind the one-album rule's back.
+   *
+   * Writes the field row straight to the database, the way media ended up in
+   * several albums before the rule existed. Only the data table is written, so
+   * the album must not be translated or saved again in the test.
+   */
+  protected function addToAlbumDirectly(Album $album, MediaInterface $media): void {
+    $table = $this->container->get(OneAlbumPerMedia::class)->table();
+    $this->assertNotNull($table);
+    [$table, $column] = $table;
+    $this->container->get('database')->insert($table)->fields([
+      'bundle' => Album::BUNDLE,
+      'deleted' => 0,
+      'entity_id' => $album->id(),
+      'revision_id' => $album->getRevisionId(),
+      'langcode' => $album->language()->getId(),
+      'delta' => $album->get('field_album_media')->count(),
+      $column => $media->id(),
+    ])->execute();
+    $this->container->get('entity_type.manager')->getStorage('node')->resetCache([$album->id()]);
   }
 
 }

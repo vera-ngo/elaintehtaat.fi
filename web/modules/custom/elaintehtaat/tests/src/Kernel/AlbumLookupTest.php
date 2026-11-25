@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Tests finding the albums a media item belongs to.
+ * Tests finding the album a media item belongs to.
  */
 #[Group('elaintehtaat')]
 #[RunTestsInSeparateProcesses]
@@ -43,65 +43,60 @@ class AlbumLookupTest extends KernelTestBase {
   }
 
   /**
-   * Every published album holding the item is found, newest first.
+   * The album holding the item is found, whatever its status.
    */
-  public function testAlbumsOfReturnsPublishedAlbumsNewestFirst(): void {
+  public function testAlbumOf(): void {
     $media = $this->createImageMedia();
-    $older = $this->createAlbum([
-      'title' => 'First sighting',
-      'created' => 100,
-      'field_album_media' => [$media],
-    ]);
-    $newer = $this->createAlbum([
-      'title' => 'Later sighting',
-      'created' => 200,
-      'field_album_media' => [$media],
-    ]);
-    // Neither of these should turn up.
-    $this->createAlbum([
+    $draft = $this->createImageMedia('Draft frame');
+    $album = $this->createAlbum(['title' => 'Sighting', 'field_album_media' => [$media]]);
+    $unpublished = $this->createAlbum([
       'title' => 'Draft',
       'status' => 0,
-      'created' => 300,
-      'field_album_media' => [$media],
+      'field_album_media' => [$draft],
     ]);
-    $this->createAlbum(['title' => 'Elsewhere', 'field_album_media' => []]);
+    $this->createAlbum(['title' => 'Elsewhere', 'field_album_media' => [$this->createImageMedia('Other')]]);
 
-    $albums = $this->lookup->albumsOf($media);
-
-    $this->assertSame(
-      [$newer->id(), $older->id()],
-      array_map(static fn ($album): string => (string) $album->id(), $albums),
-    );
-    $this->assertSame($newer->id(), $this->lookup->newestAlbumOf($media)?->id());
+    $this->assertSame($album->id(), $this->lookup->albumOf($media)?->id());
+    $this->assertSame($unpublished->id(), $this->lookup->albumOf($draft)?->id());
   }
 
   /**
    * An item in no album at all yields nothing.
    */
-  public function testAlbumsOfWithoutAnyAlbum(): void {
-    $media = $this->createImageMedia();
-
-    $this->assertSame([], $this->lookup->albumsOf($media));
-    $this->assertNull($this->lookup->newestAlbumOf($media));
+  public function testAlbumOfWithoutAnyAlbum(): void {
+    $this->assertNull($this->lookup->albumOf($this->createImageMedia()));
   }
 
   /**
-   * The status of the asked-for translation decides, not any translation's.
+   * The album is read in the language asked for, when it has that language.
    */
-  public function testAlbumsOfChecksTheStatusOfTheTranslation(): void {
+  public function testAlbumOfReadsTheTranslation(): void {
     ConfigurableLanguage::createFromLangcode('fi')->save();
+    ConfigurableLanguage::createFromLangcode('sv')->save();
 
     $media = $this->createImageMedia();
-    $album = $this->createAlbum([
-      'title' => 'Published in English only',
-      'field_album_media' => [$media],
-    ]);
-    $translation = $album->addTranslation('fi', ['title' => 'Vain englanniksi']);
-    $translation->setUnpublished();
-    $translation->save();
+    $album = $this->createAlbum(['title' => 'Pig farm', 'field_album_media' => [$media]]);
+    $album->addTranslation('fi', ['title' => 'Sikala'])->save();
 
-    $this->assertCount(1, $this->lookup->albumsOf($media, 'en'));
-    $this->assertSame([], $this->lookup->albumsOf($media, 'fi'));
+    $this->assertSame('Pig farm', $this->lookup->albumOf($media)?->label());
+    $this->assertSame('Sikala', $this->lookup->albumOf($media, 'fi')?->label());
+    $this->assertSame('Pig farm', $this->lookup->albumOf($media, 'sv')?->label());
+  }
+
+  /**
+   * Media left in several albums from before the rule gets the newest one.
+   */
+  public function testAlbumOfWithLeftoverDuplicates(): void {
+    $media = $this->createImageMedia();
+    $this->createAlbum(['title' => 'Older', 'created' => 100, 'field_album_media' => [$media]]);
+    $newer = $this->createAlbum([
+      'title' => 'Newer',
+      'created' => 200,
+      'field_album_media' => [$this->createImageMedia('Other')],
+    ]);
+    $this->addToAlbumDirectly($newer, $media);
+
+    $this->assertSame($newer->id(), $this->lookup->albumOf($media)?->id());
   }
 
   /**

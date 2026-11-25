@@ -164,19 +164,21 @@ class MediaPageControllerTest extends KernelTestBase {
    */
   public function testAlbumLicenceFallback(): void {
     $album_licence = $this->createLicence('CC BY-NC-ND 4.0', 'https://creativecommons.org/licenses/by-nc-nd/4.0/');
+    $unlicensed = $this->createImageMedia('Ilman lisenssiä');
+    $licensed = $this->createImageMedia('Lisenssillä', ['field_licence' => $this->licence]);
     $album = $this->createAlbum([
       'field_license' => $album_licence,
-      'field_album_media' => [$this->media[0], $this->media[1]],
+      'field_album_media' => [$unlicensed, $licensed],
     ]);
     $controller = $this->controller();
 
-    $build = $controller->build($album, $this->media[0]);
+    $build = $controller->build($album, $unlicensed);
     $this->assertSame('CC BY-NC-ND 4.0', $build['#props']['licence_name']);
     $this->assertSame('https://creativecommons.org/licenses/by-nc-nd/4.0/', $build['#props']['licence_url']);
     $this->assertContains('taxonomy_term:' . $album_licence->id(), $build['#cache']['tags']);
 
     // The media's own licence wins over the album's.
-    $own = $controller->build($album, $this->media[1])['#props'];
+    $own = $controller->build($album, $licensed)['#props'];
     $this->assertSame('CC BY 4.0', $own['licence_name']);
   }
 
@@ -229,13 +231,14 @@ class MediaPageControllerTest extends KernelTestBase {
    * An album with a single item has no previous/next links.
    */
   public function testSingleItem(): void {
+    $media = $this->createImageMedia('Yksin');
     $album = $this->createAlbum([
       'title' => 'Yksi',
       'field_project' => $this->project,
-      'field_album_media' => [$this->media[0]],
+      'field_album_media' => [$media],
     ]);
 
-    $props = $this->controller()->build($album, $this->media[0])['#props'];
+    $props = $this->controller()->build($album, $media)['#props'];
     $this->assertSame(1, $props['total']);
     $this->assertSame('', $props['prev_url']);
     $this->assertSame('', $props['next_url']);
@@ -269,7 +272,7 @@ class MediaPageControllerTest extends KernelTestBase {
     $album = $this->createAlbum([
       'title' => 'Videot',
       'field_project' => $this->project,
-      'field_album_media' => [$video, $this->media[0]],
+      'field_album_media' => [$video, $this->createImageMedia('Kuva videon jälkeen')],
     ]);
 
     $build = $this->controller()->build($album, $video);

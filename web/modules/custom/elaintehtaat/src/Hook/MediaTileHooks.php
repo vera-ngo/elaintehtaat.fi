@@ -18,9 +18,9 @@ use Drupal\media\MediaInterface;
  * Links media tiles to the media page of the album they belong to.
  *
  * A tile in a listing opens the item full screen on the media page of the
- * album that contains it, and shows the album name as the link text. Inside an
- * album that is the album being viewed; elsewhere, where the item may belong to
- * several albums, it is the newest one.
+ * album that contains it, and shows the album name as the link text. A media
+ * item belongs to at most one album; an item whose album is unpublished gets
+ * no link.
  *
  * @see \Drupal\elaintehtaat\Controller\MediaPageController
  */
@@ -52,7 +52,10 @@ final readonly class MediaTileHooks {
     if ($album === NULL) {
       // Saving any album may add this item to an album or remove it from one.
       $cache->addCacheTags(['node_list:album']);
-      $album = $this->albumLookup->newestAlbumOf($media);
+      $album = $this->albumLookup->albumOf($media);
+      if ($album !== NULL && !$album->isPublished()) {
+        $album = NULL;
+      }
     }
     if ($album !== NULL) {
       $album = $this->entityRepository->getTranslationFromContext($album);

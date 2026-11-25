@@ -109,10 +109,12 @@ final class AlbumData extends ProcessorPluginBase {
 
     $property = new EntityProcessorProperty([
       'label' => $this->t('Album'),
-      'description' => $this->t('The published albums this media item belongs to.'),
+      'description' => $this->t('The published album this media item belongs to.'),
       'type' => 'entity:node',
       'processor_id' => $this->getPluginId(),
-      // An item may belong to several albums.
+      // A list of at most one: an item belongs to at most one album, and an
+      // unpublished album gives none. Kept a list so the index fields and
+      // their stored data stay as they were.
       'is_list' => TRUE,
     ]);
     $property->setEntityTypeId('node');
@@ -142,7 +144,10 @@ final class AlbumData extends ProcessorPluginBase {
     }
 
     $langcode = $item->getLanguage();
-    $albums = $this->albumLookup->albumsOf($media, $langcode);
+    // The status of the indexed translation decides, not any translation's:
+    // status is translatable on nodes.
+    $album = $this->albumLookup->albumOf($media, $langcode);
+    $albums = $album !== NULL && $album->isPublished() ? [$album] : [];
 
     // A field on the album itself, with nothing nested under it, gets the
     // album entities, the way Views fields want them.
@@ -153,9 +158,6 @@ final class AlbumData extends ProcessorPluginBase {
       unset($to_extract['']);
     }
 
-    // Values of every album accumulate on the same fields, so an item in two
-    // albums is found by the species of either. Repeated values do no harm:
-    // the database backend stores each distinct value once.
     foreach ($albums as $album) {
       $this->getFieldsHelper()->extractFields($album->getTypedData(), $to_extract, $langcode);
     }
